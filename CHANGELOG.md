@@ -1,3 +1,84 @@
+# 3.1.0 / 2020-09-08
+
+**General**
+
+- Loosen team password confirmation in team settings to also accept the team captain's password to make it easier to change the team password
+- Adds the ability to add custom user and team fields for registration/profile settings.
+- Improve Notifications pubsub events system to use a subscriber per server instead of a subscriber per browser. This should improve the reliability of CTFd at higher load and make it easier to deploy the Notifications system
+
+**Admin Panel**
+
+- Add a comments functionality for admins to discuss challenges, users, teams, pages
+- Adds a legal section in Configs where users can add a terms of service and privacy policy
+- Add a Custom Fields section in Configs where admins can add/edit custom user/team fields
+- Move user graphs into a modal for Admin Panel
+
+**API**
+
+- Add `/api/v1/comments` to manipulate and create comments
+
+**Themes**
+
+- Make scoreboard caching only cache the score table instead of the entire page. This is done by caching the specific template section. Refer to #1586, specifically the changes in `scoreboard.html`.
+- Add custom field inputs to profile pages (`teams/public.html`, `teams/private.html`, `users/public.html`, `users/private.html`), registration pages (`register.html`), and settings pages (`settings.html`).
+  - This is implemented in the core theme with `form.extra` & `user.fields` with a special helper (`render_extra_fields`) defined in `macros/forms.html`. The best way to implement this is to look at how the core theme handles it and copy the relevant behavior.
+- Add rel=noopener to external links to prevent tab napping attacks
+- Change the registration page to reference links to Terms of Service and Privacy Policy if specified in configuration
+
+**Miscellaneous**
+
+- Make team settings modal larger in the core theme
+- Update tests in Github Actions to properly test under MySQL and Postgres
+- Make gevent default in serve.py and add a `--disable-gevent` switch in serve.py
+- Add `tenacity` library for retrying logic
+- Add `pytest-sugar` for slightly prettier pytest output
+- Add a `listen()` method to `CTFd.utils.events.EventManager` and `CTFd.utils.events.RedisEventManager`.
+  - This method should implement subscription for a CTFd worker to whatever underlying notification system there is. This should be implemented with gevent or a background thread.
+  - The `subscribe()` method (which used to implement the functionality of the new `listen()` function) now only handles passing notifications from CTFd to the browser. This should also be implemented with gevent or a background thread.
+
+# 3.0.2 / 2020-08-23
+
+**Admin Panel**
+
+- Fix submission searching in Admin Panel
+- Fix update banner being hidden behind navbar
+
+**Plugins**
+
+- Change default `input` & `submit` blocks in `challenge.html` to use the default values specified in the original challenge type plugins
+
+# 3.0.1 / 2020-08-12
+
+**General**
+
+- Fix issue where admins could not see user graphs/api data if score visibility was set to hidden
+
+**Admin Panel**
+
+- Allow the Admin Panel Submissions page to filter by Account IDs, Challenge IDs, and Challenge Names
+- Link to correct submissions for challenge from the challenge page
+
+**API**
+
+- Fix regression for creating hints via ctfcli. See #1582 for details. https://github.com/CTFd/CTFd/issues/1582.
+- Deprecate `CTFd.api.v1.helpers.models.build_model_filters` and wrap it to `CTFd.utils.helpers.models.build_model_filters`
+
+**Themes**
+
+- Fix team pages to use the correct core errors component
+
+**Plugins**
+
+- Fix issues with previewing challenges under some challenge type plugins
+
+**Deployment**
+
+- Values specified in `config.ini` will now supercede values specified via environment variable. Config behavior is as follows:
+  1. Config Key exists in `config.ini` and is set to a value. That value becomes the app config.
+  2. Config Key exists in `config.ini` but is set to an empty string. An envvar with the same name is looked up. The envvar's value is used as the app config.
+  3. If the envvar is not found, fall back to the default specified value in `config.py`
+  4. If there is no default, use None or an empty string
+
 # 3.0.0 / 2020-07-27
 
 ## Changelog Summary
