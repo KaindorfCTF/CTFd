@@ -147,6 +147,8 @@ class ServerConfig(object):
 
     MAIL_SSL: bool = process_boolean_str(config_ini["email"]["MAIL_SSL"])
 
+    MAILSENDER_ADDR: str = empty_str_cast(config_ini["email"]["MAILSENDER_ADDR"])
+
     MAILGUN_API_KEY: str = empty_str_cast(config_ini["email"]["MAILGUN_API_KEY"])
 
     MAILGUN_BASE_URL: str = empty_str_cast(config_ini["email"]["MAILGUN_API_KEY"])
@@ -208,6 +210,7 @@ class TestingConfig(ServerConfig):
     TESTING = True
     DEBUG = True
     SQLALCHEMY_DATABASE_URI = os.getenv("TESTING_DATABASE_URL") or "sqlite://"
+    MAIL_SERVER = os.getenv("TESTING_MAIL_SERVER")
     SERVER_NAME = "localhost"
     UPDATE_CHECK = False
     REDIS_URL = None
